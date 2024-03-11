@@ -14,7 +14,11 @@ namespace Core.Concretes.Constants.Profiles
 
             CreateMap<Post, PostListItem>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Title))
-                .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(x => x.Title).ToArray()));
+                .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(x => x.Title).ToArray()))
+                .ForMember(dest => dest.ShortContent, opt => opt.MapFrom(src => string.Join(" ", src.Content.Substring(0,150))));
+
+            CreateMap<Category, CategoryListItem>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Title));
         }
     }
 }

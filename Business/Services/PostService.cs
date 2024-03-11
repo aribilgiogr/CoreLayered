@@ -16,9 +16,32 @@ namespace Business.Services
             this.mapper = mapper;
         }
 
+        public async Task CreatePostAsync(Post post, string[]? tags = null)
+        {
+            await unitOfWork.PostRepo.CreateOneAsync(post);
+            await unitOfWork.CommitAsync();
+            if (tags != null)
+            {
+                foreach (var tag in tags)
+                {
+                    if (!await unitOfWork.TagRepo.AnyAsync(x => x.Title == tag && x.PostId == post.Id))
+                    {
+                        await unitOfWork.TagRepo.CreateOneAsync(new Tag { Title = tag, PostId = post.Id });
+                    }
+                }
+            }
+            await unitOfWork.CommitAsync();
+        }
+
+        public async Task<IEnumerable<CategoryListItem>> GetCategoriesAsync()
+        {
+            return mapper.Map<List<CategoryListItem>>(await unitOfWork.CategoryRepo.ReadManyAsync());
+        }
+
         public async Task<PostDetail> GetPostAsync(int postId)
         {
-            return mapper.Map<PostDetail>(await unitOfWork.PostRepo.ReadOneAsync(postId));
+            var post = await unitOfWork.PostRepo.ReadOneAsync(postId);
+            return mapper.Map<PostDetail>(post);
         }
 
         public Task<int> GetPostCountAsync(int categoryId = 0, string? tag = null)

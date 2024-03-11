@@ -10,6 +10,8 @@ namespace Core.Concretes.DTOs
     {
         public int Id { get; set; }
         public required string Title { get; set; }
+        public required string ShortContent { get; set; }
+        public string? FeaturedImage { get; set; }
         public DateTime PublishDate { get; set; }
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
